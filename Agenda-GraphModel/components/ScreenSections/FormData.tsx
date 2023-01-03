@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { Text, View, StyleSheet, Switch, TouchableOpacity, Alert } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
+import SelectDropdown from 'react-native-select-dropdown'
 import axios from 'axios'
 
 import InputText from '../InputText'
@@ -91,15 +92,42 @@ const FormData = ({date, selectedFood}: {date: any, selectedFood?: any}) => {
         }
     }
 
+    const foodList = ['Foutou sauce Graine', 'Placali', 'Eru water fufu', 'Poulet Dg', 'Atiéké']
+    console.log(foodName);
+    
+
     // Form content
     const renderContent = () => {
 
         return(
             <View style={styles.formContent}>
-                    <InputText 
+                    {/* <InputText 
                         title='Food eaten' value={foodName} icon='food-turkey' type='text' placeholder='Enter food eaten' 
                         onChange={(food: string) => {setFoodName(food)}} 
-                    />
+                    /> */}
+                    <View style={styles.line}>
+                        <Text style={styles.title}>
+                            <Text style={{ marginRight: 10 }}>
+                                <MaterialCommunityIcons name='food-turkey' color='#6B0079' size={25} />
+                            </Text>
+                            {'\t'}
+                            Eating fruit and vegetebles ?
+                        </Text>
+                        <SelectDropdown
+                            data={foodList}
+                            onSelect={(selectedItem, index) => {
+                                setFoodName(selectedItem)
+                            }}
+                            buttonTextStyle={{ color: '#7E7E7E', textAlign: 'justify', marginLeft: 0, fontSize: 15 }}
+                            buttonStyle={{ backgroundColor: 'transparent' }}
+                            buttonTextAfterSelection={(selectedItem, index) => {
+                                return selectedItem
+                            }}
+                            rowTextForSelection={(item, index) => {
+                                return item
+                            }}
+                        />
+                    </View>
                     <InputText 
                         title='Number times food eaten' value={numberTimesEaten} icon='food-drumstick' type='phone-pad' placeholder='Enter number' 
                         onChange={(food: number) => {setNumberTimesEaten(food)}} 
