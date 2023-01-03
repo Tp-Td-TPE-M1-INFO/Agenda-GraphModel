@@ -21,13 +21,13 @@ export const convertToDate = (date: Date) => {
             weekDay = 'Friday'
         }else if(day === 6){
             weekDay = 'Saturday'
-        }else if(day === 7){
+        }else if(day === 0){
             weekDay = 'Sunday'
         }  
         
         //days = days.toLocaleString('en-US', {minimumIntegerDigits: 2})
 
     return(
-        <Text>{` ${weekDay}, ${days}/${month}/${year}`}</Text>
+        <Text>{` ${weekDay}, ${days}/${month + 1}/${year}`}</Text>
     )
 }

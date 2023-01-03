@@ -1,4 +1,4 @@
-import { FlatList, View, StyleSheet, ScrollView } from 'react-native'
+import { FlatList, View, StyleSheet, SafeAreaView } from 'react-native'
 import React from 'react'
 import FoodBox from '../FoodBox'
 
@@ -14,14 +14,14 @@ const FoodsEaten = () => {
         //     <FoodBox />
         // </ScrollView>
 
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <FlatList
                 data={items}
                 renderItem={({ item }) => item}
                 //keyExtractor={items}
                 numColumns={2}
             />
-        </View>
+        </SafeAreaView>
     )
 }
 

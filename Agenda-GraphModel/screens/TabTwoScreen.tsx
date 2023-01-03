@@ -1,100 +1,93 @@
-import { SafeAreaView, TextInput, StyleSheet, Switch, Dimensions } from 'react-native'
-import React, { useState } from 'react'
-import { addDays } from 'date-fns'
-import { DatePicker } from 'react-native-week-month-date-picker'
+import { SafeAreaView, ScrollView, StyleSheet, RefreshControl, Dimensions, Pressable } from 'react-native'
+import React, { useState, useRef, useCallback } from 'react'
 import { FontAwesome } from '@expo/vector-icons'
+import { DateTimePickerAndroid } from '@react-native-community/datetimepicker'
 import { convertToDate } from '../components/Functions'
+import FormData from '../components/ScreenSections/FormData'
 
 import { Text, View } from '../components/Themed'
 
+
+//Refresh control
+const wait = (timeout: any) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+}
+
+
 export default function TabTwoScreen() {
-	const minDate = new Date()
-    const [food, setFood] = useState('')
-    const [healthProblem, setHealthProblem] = useState('')
-    const [fruits, setFruits] = useState(false)
-    const [selectedDate, setSelectedDate] = React.useState(
-        addDays(new Date(), 0)
-    )
-    const toggleSwitch = () => setFruits(previousState => !previousState);
+    
 
-    const renderContent = () => {
+    const [date, setDate] = useState(new Date())
+    const [foodList, setFoodList] = useState<any>([])  
+    const [refreshing, setRefreshing] = useState(false)
+    const [key, setKey] = useState(0)
+    const mounted = useRef<any>()
 
-        return(
-            <>
-                <Text style={styles.date}>
-                    {/* <Icon name='calendar' type='font-awesome' color='#fff' /> */}
-                    {convertToDate(selectedDate)}
-                </Text>
-            
-                <View style={styles.formContent}>
 
-                    <View style={styles.line}>
-                        <Text style={styles.title}>
-                            {/* <Icon name='calendar' type='font-awesome' /> */}
-                            Food eaten
-                        </Text>
-                        <TextInput
-                            style={{height: 40}}
-                            placeholder="Enter food eaten this day"
-                            onChangeText={newText => setFood(newText)}
-                            defaultValue={food}
-                        />
-                    </View>
-                    <View style={styles.line}>
-                        <Text style={styles.title}>
-                            {/* <Icon name='calendar' type='font-awesome' /> */}
-                            Eating fruits and legumes ?
-                        </Text>
-                        <Switch
-                            trackColor={{ false: "#767577", true: "orange" }}
-                            thumbColor={fruits ? "#6B0079" : "#f4f3f4"}
-                            ios_backgroundColor="#3e3e3e"
-                            onValueChange={toggleSwitch}
-                            value={fruits}
-                        />
-                    </View>
-                    <View style={styles.line}>
-                        <Text style={styles.title}>
-                            {/* <Icon name='calendar' type='font-awesome' /> */}
-                            Health Problem
-                        </Text>
-                        <TextInput
-                            style={{height: 40}}
-                            placeholder="Enter your actual health problem"
-                            onChangeText={newText => setHealthProblem(newText)}
-                            defaultValue={healthProblem}
-                        />
-                    </View>
-                    
-                </View>
-            </>
-        )
+    // Get food data corresponding to the day selected
+    const filterFood = foodList.find((f: any) => {            
+        return f.date == date.toDateString()
+    })
+    
+    //Date picker code
+    const onChange = (event: any, selectedDate: any) => {
+        const currentDate = selectedDate
+        setDate(currentDate)
     }
+
+    const showMode = (currentMode: any) => {
+        DateTimePickerAndroid.open({
+            value: date,
+            onChange,
+            mode: currentMode,
+            is24Hour: true,
+        })
+    }
+    
+    const showDatepicker = () => {
+        showMode('date')
+    }
+
+    //Refresh control
+    const onRefresh = useCallback(() => {
+        setRefreshing(true)
+        setKey((prevKey) => prevKey + 1)
+        wait(2000).then(() => setRefreshing(false))
+    }, [date])
+
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            {/* <DatePicker
-                minDate={minDate}
-                maxDate={addDays(minDate, 120)}
-                markedDates={[minDate, addDays(new Date(), 2)]}
-                selectedDate={selectedDate}
-                onDateChange={(date) => setSelectedDate(date)}
-                disabledDates={[addDays(new Date(), 1), addDays(new Date(), 3)]}
-                allowsPastDates={true}
-                theme={{
-                    primaryColor: '#6B0079',
-                }}
-                locale="fr"
-                translations={{
-                    todayButtonText: "Today",
-                }}
-            /> */}
-                {/* <View style={styles.container}>
 
-                    { renderContent() }
+            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Text style={styles.date}>
+                    {convertToDate(date)}
+                </Text>
+                <Pressable onPress={showDatepicker}>
+                    <FontAwesome name='calendar' color='#F68712' size={25} style={{ margin: 10 }} />
+                </Pressable>
+            </View>
+        
+            <ScrollView 
+                style={styles.formContent}
+                key={key}
+                refreshControl={
+                    <RefreshControl
+                    colors={['#6B0079']}
+                      refreshing={refreshing}
+                      onRefresh={onRefresh}
+                    />
+                }
 
-                </View> */}
-            {/* </DatePicker> */}
+            >
+                
+                {
+                    <FormData date={date.toDateString()} selectedFood={filterFood} />
+                }
+            
+            </ScrollView>
+
+
         </SafeAreaView>
     )
 }
@@ -107,16 +100,14 @@ const styles = StyleSheet.create({
         height: Dimensions.get('window').height
     },
     date: {
-        color: '#fff',
+        color: '#F68712',
         fontSize: 18,
         padding: 15,
-        borderRadius: 30,
-        textAlign: 'center',
         fontWeight: 'bold',
-        backgroundColor: '#6B0079'
     },
     formContent: {
-        marginTop: 40,
+        marginTop: 15,
+        margin: 10
     },
     line: {
         display: 'flex',
@@ -129,9 +120,13 @@ const styles = StyleSheet.create({
         paddingVertical: 6,
         elevation: 1,
         marginBottom: 10,
+        borderRightWidth: 5,
+        borderEndColor: '#F68712',
+        paddingTop: 10,
+        paddingBottom: 15
     },
     title: {
         fontSize: 16,
-
+        color: 'black'
     }
 })

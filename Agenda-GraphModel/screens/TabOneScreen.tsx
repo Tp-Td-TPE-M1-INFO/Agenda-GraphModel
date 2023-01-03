@@ -9,6 +9,7 @@ import FoodsEaten from '../components/ScreenSections/FoodsEaten'
 
 
 export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
+	
 	return (
 		<>
 			<View style={styles.header}>

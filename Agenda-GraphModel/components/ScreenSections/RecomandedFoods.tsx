@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView } from 'react-native'
+import { SafeAreaView, Text, StyleSheet, ScrollView } from 'react-native'
 import React from 'react'
 import FoodBox from '../FoodBox'
 
@@ -6,11 +6,13 @@ import FoodBox from '../FoodBox'
 const RecomandedFoods = () => {
 
     return (
-        <ScrollView style={styles.container} horizontal>
-            <FoodBox />
-            <FoodBox />
-            <FoodBox />
-        </ScrollView>
+        <SafeAreaView>
+            <ScrollView style={styles.container} horizontal>
+                <FoodBox />
+                <FoodBox />
+                <FoodBox />
+            </ScrollView>
+        </SafeAreaView>
     )
 }
 
