@@ -1,27 +1,29 @@
-import { FlatList, View, StyleSheet, SafeAreaView } from 'react-native'
-import React from 'react'
+import { FlatList, View, Text, StyleSheet, SafeAreaView } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import axios from '../api/axios'
 import FoodBox from '../FoodBox'
 
 const FoodsEaten = () => {
 
-    let items = [<FoodBox />, <FoodBox />, <FoodBox />, <FoodBox />, <FoodBox />]
+    const [foodEaten, setFoodEaten] = useState([])
+
+    useEffect(() => {
+        getData()
+    }, [])
+
+    const getData = async() => {
+        const response = await axios.get(`nutrition/get-nutrition/${'63b6c873a6f874ba525c8ba7'}`)
+        setFoodEaten(response.data)
+    }
 
     return (
-        // <ScrollView style={styles.container} numColumns={2}>
-        //     <FoodBox />
-        //     <FoodBox />
-        //     <FoodBox />
-        //     <FoodBox />
-        // </ScrollView>
 
-        <SafeAreaView style={styles.container}>
-            <FlatList
-                data={items}
-                renderItem={({ item }) => item}
-                //keyExtractor={items}
-                numColumns={2}
-            />
-        </SafeAreaView>
+        <FlatList
+            data={foodEaten}
+            renderItem={({ item }) => <FoodBox date={`${item.date}`} name={`${item.foods}`} />}
+            keyExtractor={item => item._id}
+            numColumns={2}
+        />      
     )
 }
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { View, Text, StyleSheet, ScrollView } from 'react-native'
-import axios from 'axios'
+import axios from '../components/api/axios'
 
 import Input from '../components/Input'
 import Button from '../components/ButtonBg'
@@ -14,6 +14,8 @@ const AccountScreen = () => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
+    const id = 3
+
     const updateData = async() => {
         const data = {
             name,
@@ -24,7 +26,7 @@ const AccountScreen = () => {
 		}
         
         try{
-            const response = await axios.put('', data)
+            const response = await axios.put(`${id}`, data)
 			
             if(response.status===200 || response.status===201){
                 navigation.navigate('Root')

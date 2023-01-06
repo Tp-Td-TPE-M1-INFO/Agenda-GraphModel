@@ -68,6 +68,7 @@ function BottomTabNavigator() {
 			component={TabOneScreen}
 			options={({ navigation }: RootTabScreenProps<'TabOne'>) => ({
 			title: 'Home',
+			headerTintColor: '#fff',
 			tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
 			headerStyle: { backgroundColor: Colors[colorScheme].text },
 			headerRight: () => (
@@ -93,6 +94,7 @@ function BottomTabNavigator() {
 			options={({ navigation }: RootTabScreenProps<'TabTwo'>) => ({
 			title: 'Calendar',
 			tabBarIcon: ({ color }) => <TabBarIcon name="calendar" color={color} />,
+			headerTintColor: '#fff',
 			headerStyle: { backgroundColor: Colors[colorScheme].text },
 			headerRight: () => (
 				<Pressable
@@ -116,6 +118,7 @@ function BottomTabNavigator() {
 			options={({ navigation }: RootTabScreenProps<'TabThree'>) => ({
 			title: 'Account',
 			tabBarIcon: ({ color }) => <TabBarIcon name="user-circle" color={color} />,
+			headerTintColor: '#fff',
 			headerStyle: { backgroundColor: Colors[colorScheme].text },
 			headerRight: () => (
 				<Pressable

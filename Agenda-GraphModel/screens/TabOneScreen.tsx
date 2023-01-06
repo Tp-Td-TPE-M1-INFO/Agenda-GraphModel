@@ -1,21 +1,40 @@
 import { StyleSheet, ScrollView } from 'react-native'
-
+import React, {useState} from 'react'
 import { Text, View } from '../components/Themed'
 import { RootTabScreenProps } from '../types'
 import SearchBar from '../components/SearchBar'
 import TitleRow from '../components/TitleRow'
 import RecomandedFoods from '../components/ScreenSections/RecomandedFoods'
 import FoodsEaten from '../components/ScreenSections/FoodsEaten'
+import { getUserData } from '../components/api/GetUserData'
+import { useEffect } from 'react'
 
 
 export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
+
+	const [userData, setUserData] = useState({
+		username:""
+	})
+
+	useEffect(()=>{
+		getData()
+	})
+
+	const getData = async () => {
+		const user = await getUserData()
+		setUserData({
+			username: user.username
+		})
+	}
+
 	
 	return (
 		<>
 			<View style={styles.header}>
 				<View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', backgroundColor: 'transparent', marginBottom: 20, marginTop: 10 }}>
 					<Text style={styles.text}>Hello, </Text> 
-					<Text style={[{ fontWeight: 'bold' }, styles.text]}>Jugalux</Text>
+					{ userData? (<Text style={[{ fontWeight: '500' }, styles.text]}>{userData.username}</Text>):("") }
+					
 				</View>
 				<SearchBar />
 			</View>
@@ -52,7 +71,7 @@ const styles = StyleSheet.create({
 	},
 	text: {
 		color: '#fff',
-		fontSize: 24
+		fontSize: 22
 	},
 	box: {
 		backgroundColor: 'transparent',

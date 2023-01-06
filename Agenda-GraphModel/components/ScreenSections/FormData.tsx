@@ -2,7 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react'
 import { Text, View, StyleSheet, Switch, TouchableOpacity, Alert } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import SelectDropdown from 'react-native-select-dropdown'
-import axios from 'axios'
+import MultiSelect from 'react-native-multiple-select'
+import axios from '../api/axios'
 
 import InputText from '../InputText'
 import Button from '../ButtonBg'
@@ -10,28 +11,31 @@ import Button from '../ButtonBg'
 
 const FormData = ({date, selectedFood}: {date: any, selectedFood?: any}) => {
     
-    const [foodName, setFoodName] = useState('')
+    const [foodName, setFoodName] = useState([])
     const [healthProblem, setHealthProblem] = useState('')
-    const [numberTimesEaten, setNumberTimesEaten] = useState(0)
+    const [numberTimesEaten, setNumberTimesEaten] = useState(selectedFood?.nbEaten)
     const [qWater, setQWater] = useState(0)
     const [qLiquid, setQLiquid] = useState(0)
     const [sportDuration, setSportDuration] = useState(0)
     const [fruits, setFruits] = useState(false)
+
+    const [foods, setFoods] = useState([])
+    const [selectedItems, setSlectedItems] = useState([]) // Foods selected in form
 
     const toggleSwitch = () => setFruits((previousState: boolean) => !previousState);
 
     useEffect(() => {
 
         if (selectedFood && selectedFood?.date==date) {
-            setFoodName(selectedFood.food_name);
-            setNumberTimesEaten(selectedFood.number_times_eaten.toString());
-            setQWater(selectedFood.q_water);
-            setQLiquid(selectedFood.q_liquid);
-            setSportDuration(selectedFood.sport_duration.toString());
-            setHealthProblem(selectedFood.health_problem);
-            setFruits(selectedFood.eat_fruit == 1 ? true:false);
+            setFoodName(selectedFood.foods);
+            setNumberTimesEaten(selectedFood.nbEaten);
+            setQWater(selectedFood.qtyWater);
+            setQLiquid(selectedFood.qLiquid);
+            setSportDuration(selectedFood.nbMovement);
+            setHealthProblem(selectedFood.healthProblem);
+            setFruits(selectedFood.eatenFruit);
         } else {
-            setFoodName("");
+            setFoodName([]);
             setNumberTimesEaten(0);
             setQWater(0);
             setQLiquid(0);
@@ -41,22 +45,25 @@ const FormData = ({date, selectedFood}: {date: any, selectedFood?: any}) => {
         }
         
     }, [selectedFood])
+    console.log(date, selectedFood?.nbEaten)  // **************************************
 
     const updateData = async() => {
         const data = {
-            foodName,
+            date,
+            foods: selectedItems,
             healthProblem,
-            numberTimesEaten,
-            qWater,
+            nbEaten: numberTimesEaten,
+            qtyWater: qWater,
 			qLiquid,
-            sportDuration,
-            fruits
+            nbMovement: sportDuration,
+            eatenFruit: fruits
 		}
         
         try{
-            const response = await axios.put('', data)
+            const response = await axios.put(`nutrition/update-nutrition/${'63b6c873a6f874ba525c8ba7'}`, data)
 			
             if(response.status===200 || response.status===201){
+                console.log(data)
                 alert('Data edited successfully !')
             }																																																																																																																																																																																																																																																																																																		
         
@@ -69,19 +76,21 @@ const FormData = ({date, selectedFood}: {date: any, selectedFood?: any}) => {
 
     const insertData = async() => {
         const data = {
-            foodName,
+            date,
+            foods: selectedItems,
             healthProblem,
-            numberTimesEaten,
-            qWater,
+            nbEaten: numberTimesEaten,
+            qtyWater: qWater,
 			qLiquid,
-            sportDuration,
-            fruits
+            nbMovement: sportDuration,
+            eatenFruit: fruits
 		}
         
         try{
-            const response = await axios.post('', data)
+            const response = await axios.post(`nutrition/post-nutrition/${'63b6c873a6f874ba525c8ba7'}`, data)
 			
             if(response.status===200 || response.status===201){
+                console.log(data)
                 alert('Data saved successfully !')
             }																																																																																																																																																																																																																																																																																																		
         
@@ -92,28 +101,34 @@ const FormData = ({date, selectedFood}: {date: any, selectedFood?: any}) => {
         }
     }
 
-    const foodList = ['Foutou sauce Graine', 'Placali', 'Eru water fufu', 'Poulet Dg', 'Atiéké']
-    console.log(foodName);
+    useEffect(() => {
+        getFoods()
+    }, [])
     
+    const getFoods = async() => {
+        const response = await axios.get('food/getfood')
+        setFoods(response.data)
+    }
+
+    // When user select foods eaten
+    const onSelectedItemsChange = (selectedItems: any) => {
+        setSlectedItems(selectedItems);
+    }
 
     // Form content
     const renderContent = () => {
 
         return(
             <View style={styles.formContent}>
-                    {/* <InputText 
-                        title='Food eaten' value={foodName} icon='food-turkey' type='text' placeholder='Enter food eaten' 
-                        onChange={(food: string) => {setFoodName(food)}} 
-                    /> */}
                     <View style={styles.line}>
                         <Text style={styles.title}>
                             <Text style={{ marginRight: 10 }}>
                                 <MaterialCommunityIcons name='food-turkey' color='#6B0079' size={25} />
                             </Text>
                             {'\t'}
-                            Eating fruit and vegetebles ?
+                            Select foods eaten today
                         </Text>
-                        <SelectDropdown
+                        {/* <SelectDropdown
                             data={foodList}
                             onSelect={(selectedItem, index) => {
                                 setFoodName(selectedItem)
@@ -126,6 +141,27 @@ const FormData = ({date, selectedFood}: {date: any, selectedFood?: any}) => {
                             rowTextForSelection={(item, index) => {
                                 return item
                             }}
+                        /> */}
+                        <MultiSelect
+                            hideTags
+                            items={foods}
+                            uniqueKey="_id"
+                            onSelectedItemsChange={onSelectedItemsChange}
+                            selectedItems={selectedItems}
+                            selectText="Pick Foods"
+                            searchInputPlaceholderText="Search Foods..."
+                            onChangeInput={ (text)=> console.log(text)}
+                            tagRemoveIconColor="#CCC"
+                            tagBorderColor="#CCC"
+                            tagTextColor="#CCC"
+                            selectedItemTextColor="#F68712"
+                            selectedItemIconColor="#F68712"
+                            itemTextColor="#000"
+                            displayKey="name"
+                            textColor='#5B5B5B'
+                            searchInputStyle={{ color: '#6B0079' }}
+                            submitButtonColor="#F68712"
+                            submitButtonText="Save"
                         />
                     </View>
                     <InputText 
@@ -203,7 +239,7 @@ const styles = StyleSheet.create({
         paddingVertical: 6,
         elevation: 1,
         marginBottom: 10,
-        borderRightColor: '#CE0670',
+        borderRightColor: '#F68712',
         borderRightWidth: 5
     },
     title: {

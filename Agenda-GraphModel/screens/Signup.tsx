@@ -1,6 +1,6 @@
 import { View, Text, ImageBackground, StyleSheet, Dimensions, ScrollView, Image, Pressable } from 'react-native'
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import axios from '../components/api/axios'
 
 import loginBg from '../assets/images/logo.png'
 import Input from '../components/Input'
@@ -15,21 +15,38 @@ const Signup = ({navigation}: {navigation: any}) => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
+    const [items, setItems] = useState([])
+
+    useEffect(() => {
+        getData()
+    }, [])
+
+    const getData = async() => {
+        try{
+            const response = await axios.get('food/getfood')
+            
+            setItems(response.data)
+            //console.log('Food items', items)
+            
+        }catch(error){
+            console.log('Get error', error)
+        }
+    }
 
     const postData = async() => {
         const data = {
             name,
             surname,
-            age,
-            userName: username,
+            age: parseInt(age),
+            username,
 			password,
 		}
         
         try{
-            const response = await axios.post('https://agenda-graph-model-backend-1-6t2qu5m3m-tp-info-4077.vercel.app/api/user/register', data)
+            const response = await axios.post('user/register', data)
 			
             if(response.status===200 || response.status===201){
-                navigation.navigate('Root')
+                navigation.navigate('Login')
             }																																																																																																																																																																																																																																																																																																		
         
         }catch(error){
@@ -57,7 +74,6 @@ const Signup = ({navigation}: {navigation: any}) => {
                     <Input label='Password' value={password} keyboardType='visible-password' handleChange={(text: string) => setPassword(text)} />
                 </View>
 
-                
                 <Button color='violet' onPress={postData}>Signup</Button>
                 <View style={styles.authText}>
                     <Text>Already have an account ?</Text>

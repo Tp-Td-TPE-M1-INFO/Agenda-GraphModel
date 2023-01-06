@@ -1,6 +1,8 @@
 import { View, Text, ImageBackground, StyleSheet, Dimensions, ScrollView, Image, Pressable } from 'react-native'
-import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import React, { useState } from 'react'
+import axios from '../components/api/axios'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
 import loginBg from '../assets/images/logo.png'
 import Input from '../components/Input'
 import Button from '../components/ButtonBg'
@@ -16,21 +18,21 @@ const Login = ({navigation}: {navigation: any}) => {
             username,
 			password,
 		}
-
-        navigation.navigate('Root')
         
-        // try{
-        //     const response = await axios.post('https://agenda-graph-model-backend-1-6t2qu5m3m-tp-info-4077.vercel.app/api/user/login', data)
+        try{
+            const response = await axios.post('user/login', data)
 			
-        //     if(response.status===200 || response.status===201){
-        //         navigation.navigate('Root')
-        //     }																																																																																																																																																																																																																																																																																																		
+            if(response.status===200 || response.status===201){
+                
+                await AsyncStorage.setItem('Data', JSON.stringify(response.data.user))
+                navigation.navigate('Root')            
+            }																																																																																																																																																																																																																																																																																																		
         
-        // }catch(error){
-		// 	console.log(data)
-        //     alert('Post Failed');
-		// 	console.log(error)
-        // }
+        }catch(message){
+			console.log(data)
+            alert('Login Failed');
+			console.log(message)
+        }
     }
 
     return (

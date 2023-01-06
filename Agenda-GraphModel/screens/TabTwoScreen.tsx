@@ -1,9 +1,10 @@
 import { SafeAreaView, ScrollView, StyleSheet, RefreshControl, Dimensions, Pressable } from 'react-native'
-import React, { useState, useRef, useCallback } from 'react'
+import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { FontAwesome } from '@expo/vector-icons'
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker'
 import { convertToDate } from '../components/Functions'
 import FormData from '../components/ScreenSections/FormData'
+import axios from '../components/api/axios'
 
 import { Text, View } from '../components/Themed'
 
@@ -23,9 +24,17 @@ export default function TabTwoScreen() {
     const [key, setKey] = useState(0)
     const mounted = useRef<any>()
 
+    useEffect(() => {
+        getFoods()
+    }, [])
+    
+    const getFoods = async() => {
+        const response = await axios.get(`nutrition/get-nutrition/${'63b6c873a6f874ba525c8ba7'}`)
+        setFoodList(response.data)
+    }
 
     // Get food data corresponding to the day selected
-    const filterFood = foodList.find((f: any) => {            
+    const filterFood = foodList.find((f: any) => {    
         return f.date == date.toDateString()
     })
     
