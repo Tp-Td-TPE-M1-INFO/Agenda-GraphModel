@@ -21,6 +21,7 @@ const FormData = ({date, selectedFood}: {date: any, selectedFood?: any}) => {
 
     const [foods, setFoods] = useState([])
     const [selectedItems, setSlectedItems] = useState([]) // Foods selected in form
+    let selectedItemsId: any[] = [] // Id of Foods selected in form
 
     const toggleSwitch = () => setFruits((previousState: boolean) => !previousState);
 
@@ -32,7 +33,7 @@ const FormData = ({date, selectedFood}: {date: any, selectedFood?: any}) => {
             setQWater(selectedFood.qtyWater);
             setQLiquid(selectedFood.qLiquid);
             setSportDuration(selectedFood.nbMovement);
-            setHealthProblem(selectedFood.healthProblem);
+            setHealthProblem(selectedFood.healthProblem[0]);
             setFruits(selectedFood.eatenFruit);
         } else {
             setFoodName([]);
@@ -45,7 +46,6 @@ const FormData = ({date, selectedFood}: {date: any, selectedFood?: any}) => {
         }
         
     }, [selectedFood])
-    console.log(date, selectedFood?.nbEaten)  // **************************************
 
     const updateData = async() => {
         const data = {
@@ -54,7 +54,7 @@ const FormData = ({date, selectedFood}: {date: any, selectedFood?: any}) => {
             healthProblem,
             nbEaten: numberTimesEaten,
             qtyWater: qWater,
-			qLiquid,
+			//qLiquid,
             nbMovement: sportDuration,
             eatenFruit: fruits
 		}
@@ -81,7 +81,7 @@ const FormData = ({date, selectedFood}: {date: any, selectedFood?: any}) => {
             healthProblem,
             nbEaten: numberTimesEaten,
             qtyWater: qWater,
-			qLiquid,
+			//qLiquid,
             nbMovement: sportDuration,
             eatenFruit: fruits
 		}
@@ -108,12 +108,20 @@ const FormData = ({date, selectedFood}: {date: any, selectedFood?: any}) => {
     const getFoods = async() => {
         const response = await axios.get('food/getfood')
         setFoods(response.data)
-    }
+    }    
 
     // When user select foods eaten
     const onSelectedItemsChange = (selectedItems: any) => {
         setSlectedItems(selectedItems);
     }
+
+    // Get selected foods id 
+    foods.forEach(food => {
+        
+        for(let i=0; i<selectedFood?.foods.length; i++){
+            food.name == selectedFood?.foods[i] ? selectedItemsId.push(food._id) : null
+        }
+    })
 
     // Form content
     const renderContent = () => {
@@ -147,7 +155,7 @@ const FormData = ({date, selectedFood}: {date: any, selectedFood?: any}) => {
                             items={foods}
                             uniqueKey="_id"
                             onSelectedItemsChange={onSelectedItemsChange}
-                            selectedItems={selectedItems}
+                            selectedItems={selectedFood ? selectedItemsId : selectedItems}
                             selectText="Pick Foods"
                             searchInputPlaceholderText="Search Foods..."
                             onChangeInput={ (text)=> console.log(text)}
@@ -172,10 +180,10 @@ const FormData = ({date, selectedFood}: {date: any, selectedFood?: any}) => {
                         title='Quantity of water drank (Glass of water)' value={qWater} icon='cup-water' type='phone-pad' placeholder='Enter Quantity' 
                         onChange={(food: number) => {setQWater(food)}} 
                     />
-                    <InputText 
+                    {/* <InputText 
                         title='Quantity of other liquid drank (Glass of water)' value={qLiquid} icon='food-fork-drink' type='phone-pad' placeholder='Enter Quantity' 
                         onChange={(food: number) => {setQLiquid(food)}} 
-                    />
+                    /> */}
 
                     <View style={styles.line}>
                         <Text style={styles.title}>

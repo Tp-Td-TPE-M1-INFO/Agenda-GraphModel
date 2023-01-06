@@ -14,7 +14,7 @@ const InputText = ({onChange, value, icon, title, type, placeholder}: {onChange:
             </Text>
             <TextInput
                 style={{height: 40}}
-                value={value}
+                value={`${value}`}
                 placeholder={placeholder}
                 keyboardType={type}
                 onChangeText={newText => onChange(newText)}

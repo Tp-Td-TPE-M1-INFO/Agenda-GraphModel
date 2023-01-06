@@ -1,9 +1,23 @@
 import { View, Text, TextInput, StyleSheet } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { FontAwesome } from '@expo/vector-icons'
+import axios from './api/axios'
 
 
 const SearchBar = () => {
+
+    const [searchResponse, setSearchResponse] = useState()
+
+    useEffect(() => {
+        getData()
+    }, [])
+
+    const getData = async() => {
+        const response = await axios.get('search')
+        setSearchResponse(response.data)
+    }
+    //console.log('Search response', searchResponse)
+
     return (
         <View style={styles.container}>
             <FontAwesome name='search' size={19} color='#6B0079' style={{ marginTop: 5, marginRight: 5 }} />

@@ -1,5 +1,5 @@
-import { StyleSheet, ScrollView } from 'react-native'
-import React, {useState} from 'react'
+import { StyleSheet, ScrollView, RefreshControl } from 'react-native'
+import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { Text, View } from '../components/Themed'
 import { RootTabScreenProps } from '../types'
 import SearchBar from '../components/SearchBar'
@@ -7,14 +7,20 @@ import TitleRow from '../components/TitleRow'
 import RecomandedFoods from '../components/ScreenSections/RecomandedFoods'
 import FoodsEaten from '../components/ScreenSections/FoodsEaten'
 import { getUserData } from '../components/api/GetUserData'
-import { useEffect } from 'react'
 
+
+//Refresh control
+const wait = (timeout: any) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+}
 
 export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
 
 	const [userData, setUserData] = useState({
 		username:""
 	})
+	const [refreshing, setRefreshing] = useState(false)
+    const [key, setKey] = useState(0)
 
 	useEffect(()=>{
 		getData()
@@ -27,6 +33,12 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
 		})
 	}
 
+	//Refresh control
+    const onRefresh = useCallback(() => {
+        setRefreshing(true)
+        setKey((prevKey) => prevKey + 1)
+        wait(2000).then(() => setRefreshing(false))
+    }, [])
 	
 	return (
 		<>
@@ -39,7 +51,17 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
 				<SearchBar />
 			</View>
 
-			<ScrollView style={styles.container}>
+			<ScrollView 
+				style={styles.container}
+				key={key}
+                refreshControl={
+                    <RefreshControl
+                    colors={['#6B0079']}
+                      refreshing={refreshing}
+                      onRefresh={onRefresh}
+                    />
+                }
+			>
 
 				<View style={styles.box}>
 					<TitleRow title='Recommanded Food' />

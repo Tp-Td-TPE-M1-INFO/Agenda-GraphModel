@@ -25,6 +25,7 @@ const Login = ({navigation}: {navigation: any}) => {
             if(response.status===200 || response.status===201){
                 
                 await AsyncStorage.setItem('Data', JSON.stringify(response.data.user))
+                //await AsyncStorage.setItem('UserId', JSON.stringify(response.data.user._id))
                 navigation.navigate('Root')            
             }																																																																																																																																																																																																																																																																																																		
         
