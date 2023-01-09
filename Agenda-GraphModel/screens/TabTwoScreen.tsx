@@ -7,13 +7,13 @@ import FormData from '../components/ScreenSections/FormData'
 import axios from '../components/api/axios'
 
 import { Text, View } from '../components/Themed'
+import { getUserId } from '../components/api/GetUserData'
 
 
 //Refresh control
 const wait = (timeout: any) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
 }
-
 
 export default function TabTwoScreen() {
     
@@ -22,19 +22,21 @@ export default function TabTwoScreen() {
     const [foodList, setFoodList] = useState<any>([])  
     const [refreshing, setRefreshing] = useState(false)
     const [key, setKey] = useState(0)
-    const mounted = useRef<any>()
+    const [UserId, setUserId] = useState("")
 
     useEffect(() => {
         getFoods()
     }, [])
     
     const getFoods = async() => {
-        const response = await axios.get(`nutrition/get-nutrition/${'63b6c873a6f874ba525c8ba7'}`)
+        let Id = await getUserId()
+		setUserId(Id)
+        const response = await axios.get(`nutrition/get-nutrition/${UserId}`)
         setFoodList(response.data)
     }
 
     // Get food data corresponding to the day selected
-    const filterFood = foodList.find((f: any) => {    
+    const filterFood = foodList.find((f: any) => { 
         return f.date == date.toDateString()
     })
     
@@ -91,7 +93,7 @@ export default function TabTwoScreen() {
             >
                 
                 {
-                    <FormData date={date.toDateString()} selectedFood={filterFood} />
+                    <FormData date={date.toDateString()} selectedFood={filterFood} UserId={UserId} />
                 }
             
             </ScrollView>

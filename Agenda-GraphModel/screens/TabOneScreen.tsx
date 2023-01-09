@@ -6,7 +6,7 @@ import SearchBar from '../components/SearchBar'
 import TitleRow from '../components/TitleRow'
 import RecomandedFoods from '../components/ScreenSections/RecomandedFoods'
 import FoodsEaten from '../components/ScreenSections/FoodsEaten'
-import { getUserData } from '../components/api/GetUserData'
+import { getUserData, getUserId } from '../components/api/GetUserData'
 
 
 //Refresh control
@@ -21,6 +21,7 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
 	})
 	const [refreshing, setRefreshing] = useState(false)
     const [key, setKey] = useState(0)
+	const [UserId, setUserId] = useState("")
 
 	useEffect(()=>{
 		getData()
@@ -31,6 +32,8 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
 		setUserData({
 			username: user.username
 		})
+		let Id = await getUserId()
+		setUserId(Id)
 	}
 
 	//Refresh control
@@ -65,12 +68,12 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
 
 				<View style={styles.box}>
 					<TitleRow title='Recommanded Food' />
-					<RecomandedFoods />
+					<RecomandedFoods UserId={UserId} />
 				</View>
 
 				<View style={styles.box}>
 					<TitleRow title='Foods eaten' />
-					<FoodsEaten />
+					<FoodsEaten UserId={UserId} />
 				</View>
 				
 			</ScrollView>

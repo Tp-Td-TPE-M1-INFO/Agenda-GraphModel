@@ -13,3 +13,16 @@ export const getUserData = async () => {
         console.error(error);
     }
 }
+
+// Get userId in local storage
+export const getUserId = async () => {
+    try {
+        const value = await AsyncStorage.getItem('UserId');
+        if(value){
+            return JSON.parse(value)
+        }
+        
+    } catch (error) {
+        console.error(error);
+    }
+}

@@ -5,9 +5,13 @@ import axios from '../api/axios'
 import FoodBox from '../FoodBox'
 
 
-const RecomandedFoods = () => {
+const RecomandedFoods = ({UserId}: {UserId: string}) => {
 
-    const [recommandedFood, setRecommandedFood] = useState([])
+    const [recommandedFood1, setRecommandedFood1] = useState([])
+    const [recommandedFood2, setRecommandedFood2] = useState([])
+    const [recommandedFood3, setRecommandedFood3] = useState([])
+    const [recommandedFood4, setRecommandedFood4] = useState([])
+    //const [recommandedFood, setRecommandedFood] = useState([])
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
@@ -15,11 +19,14 @@ const RecomandedFoods = () => {
     }, [])
 
     const getData = async() => {
-        const response = await axios.get(`food/recommend/${'63b6c873a6f874ba525c8ba7'}`)
-        setRecommandedFood(response.data[0])
+        const response = await axios.get(`food/recommend/${UserId}`)
+        setRecommandedFood1(response.data[0])
+        setRecommandedFood2(response.data[1])
+        setRecommandedFood3(response.data[2])
+        setRecommandedFood4(response.data[3])
         setIsLoading(false)
     }
-    
+
     return (
         <>
             {
@@ -27,8 +34,26 @@ const RecomandedFoods = () => {
                 :
                 <ScrollView style={styles.container} horizontal>
                     <FlatList
-                        data={recommandedFood}
-                        renderItem={({ item }) => <FoodBox date='' name={`${item.name}`} />}
+                        data={recommandedFood1}
+                        renderItem={({ item }) => <FoodBox data={item} date='' name={`${item.name}`} />}
+                        keyExtractor={item => item._id}
+                        numColumns={80}
+                    />
+                    <FlatList
+                        data={recommandedFood2}
+                        renderItem={({ item }) => <FoodBox data={item} date='' name={`${item.name}`} />}
+                        keyExtractor={item => item._id}
+                        numColumns={80}
+                    />
+                    <FlatList
+                        data={recommandedFood3}
+                        renderItem={({ item }) => <FoodBox data={item} date='' name={`${item.name}`} />}
+                        keyExtractor={item => item._id}
+                        numColumns={80}
+                    />
+                    <FlatList
+                        data={recommandedFood4}
+                        renderItem={({ item }) => <FoodBox data={item} date='' name={`${item.name}`} />}
                         keyExtractor={item => item._id}
                         numColumns={80}
                     />

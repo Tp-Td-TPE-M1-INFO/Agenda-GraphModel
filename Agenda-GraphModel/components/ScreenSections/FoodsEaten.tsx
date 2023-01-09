@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react'
 import axios from '../api/axios'
 import FoodBox from '../FoodBox'
 
-const FoodsEaten = () => {
+
+const FoodsEaten = ({UserId}: {UserId: string}) => {
 
     const [foodEaten, setFoodEaten] = useState([])
     const [isLoading, setIsLoading] = useState(true)
@@ -13,7 +14,8 @@ const FoodsEaten = () => {
     }, [])
 
     const getData = async() => {
-        const response = await axios.get(`nutrition/get-nutrition/${'63b6c873a6f874ba525c8ba7'}`)
+        const response = await axios.get(`nutrition/get-nutrition/${UserId}`)
+        console.log(response.data)
         setFoodEaten(response.data)
         setIsLoading(false)
     }
@@ -25,7 +27,7 @@ const FoodsEaten = () => {
                 : 
                 <FlatList
                     data={foodEaten}
-                    renderItem={({ item }) => <FoodBox date={`${item.date}`} name={`${item.foods}`} />}
+                    renderItem={({ item }) => <FoodBox data={item} date={`${item.date}`} name={`${item.foods}`} />}
                     keyExtractor={item => item._id}
                     numColumns={2}
                 />

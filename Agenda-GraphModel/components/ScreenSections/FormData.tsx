@@ -9,11 +9,11 @@ import InputText from '../InputText'
 import Button from '../ButtonBg'
 
 
-const FormData = ({date, selectedFood}: {date: any, selectedFood?: any}) => {
+const FormData = ({date, selectedFood, UserId}: {date: any, selectedFood?: any, UserId: string}) => {
     
     const [foodName, setFoodName] = useState([])
     const [healthProblem, setHealthProblem] = useState('')
-    const [numberTimesEaten, setNumberTimesEaten] = useState(selectedFood?.nbEaten)
+    const [numberTimesEaten, setNumberTimesEaten] = useState()
     const [qWater, setQWater] = useState(0)
     const [qLiquid, setQLiquid] = useState(0)
     const [sportDuration, setSportDuration] = useState(0)
@@ -60,7 +60,7 @@ const FormData = ({date, selectedFood}: {date: any, selectedFood?: any}) => {
 		}
         
         try{
-            const response = await axios.put(`nutrition/update-nutrition/${'63b6c873a6f874ba525c8ba7'}`, data)
+            const response = await axios.put(`nutrition/update-nutrition/${UserId}`, data)
 			
             if(response.status===200 || response.status===201){
                 console.log(data)
@@ -87,7 +87,7 @@ const FormData = ({date, selectedFood}: {date: any, selectedFood?: any}) => {
 		}
         
         try{
-            const response = await axios.post(`nutrition/post-nutrition/${'63b6c873a6f874ba525c8ba7'}`, data)
+            const response = await axios.post(`nutrition/post-nutrition/${UserId}`, data)
 			
             if(response.status===200 || response.status===201){
                 console.log(data)
@@ -112,8 +112,12 @@ const FormData = ({date, selectedFood}: {date: any, selectedFood?: any}) => {
 
     // When user select foods eaten
     const onSelectedItemsChange = (selectedItems: any) => {
-        setSlectedItems(selectedItems);
+        setSlectedItems(selectedItems)
     }
+    const onPrevSelectedFood = (selectedItems: any) => {
+        setSlectedItems(selectedItems)
+    }
+    console.log(selectedItems)
 
     // Get selected foods id 
     foods.forEach(food => {
@@ -154,7 +158,7 @@ const FormData = ({date, selectedFood}: {date: any, selectedFood?: any}) => {
                             hideTags
                             items={foods}
                             uniqueKey="_id"
-                            onSelectedItemsChange={onSelectedItemsChange}
+                            onSelectedItemsChange={selectedFood ? onPrevSelectedFood : onSelectedItemsChange}
                             selectedItems={selectedFood ? selectedItemsId : selectedItems}
                             selectText="Pick Foods"
                             searchInputPlaceholderText="Search Foods..."
